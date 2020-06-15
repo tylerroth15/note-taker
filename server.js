@@ -10,26 +10,44 @@ var PORT = process.env.PORT || 3000;
 // Sets up the Express app to handle data parsing
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(express.static(path.join(__dirname, "Develop/public")));
+
+// Initialize HTML
+
+let noteDump =[];
+
 //Add Code Here
-app.get("/notes", function(req, res) {
-    res.sendFile(path.join(__dirname, "./public/notes.html"));
-});
-
-app.get("/*", function(req, res) {
-    res.sendFile(path.join(__dirname, "./public/index.html"));
-});
-
 app.get("/api/notes", function(req, res) {
-    res.sendFile(path.join(__dirname, "./db/db.json"));
-});
+try{
+    noteDump = fs.readFileSync("./develop/db/db.json", 'utf8');
+    console.log("IT WORKED!")
+    noteDump = JSON.parse(noteDump);
+    }
 
+    catch (err){
+        console.log(err);
+    }
+
+    res.json(noteDump);
+});
 app.post("/api/notes", function(req, res) {
-    res.sendFile(path.join(__dirname, "./db/db.json"));
+    res.sendFile(path.join(__dirname, "./develop/db/db.json"));
 });
 
 app.delete("/api/notes/:id", function(reg,res) {
-    res.sendFile(path.join(__dirname, "./db/db.json"));
+    res.sendFile(path.join(__dirname, "./develop/db/db.json"));
 });
+
+app.get("/notes", function(req, res) {
+    res.sendFile(path.join(__dirname, "./develop/public/notes.html"));
+});
+
+app.get("/*", function(req, res) {
+    res.sendFile(path.join(__dirname, "./develop/public/index.html"));
+});
+
+
+
 
 // Starts the server to begin listening
 // =============================================================
