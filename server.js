@@ -19,7 +19,7 @@ let noteDump =[];
 //Add Code Here
 app.get("/api/notes", function(req, res) {
 try{
-    noteDump = fs.readFileSync("./develop/db/db.json", 'utf8');
+    noteDump = fs.readFileSync("./Develop/db/db.json", 'utf8');
     console.log("IT WORKED!")
     noteDump = JSON.parse(noteDump);
     }
@@ -30,20 +30,60 @@ try{
 
     res.json(noteDump);
 });
+
+//Creating new notes
 app.post("/api/notes", function(req, res) {
-    res.sendFile(path.join(__dirname, "./develop/db/db.json"));
+    try {
+
+        //reads the json file
+        noteDump = fs.readFileSync("./Develop/db/db.json", "utf8");
+        console.log(noteDump);
+
+        //parse the new note created into the json file
+        noteDump =JSON.parse(noteDump);
+        req.body.id = noteDump.length;
+
+        noteDump.push(req.body);
+        noteDump = JSON.stringify(noteDump);
+        fs.writeFile("./Develop/db/db.json", noteDump, "utf8", function(err) {
+
+            if (err) throw err;
+        });
+
+        res.json(JSON.parse(noteDump));
+    }
+    catch (err){
+        throw err;
+        console.error(err);
+    }
 });
 
-app.delete("/api/notes/:id", function(reg,res) {
-    res.sendFile(path.join(__dirname, "./develop/db/db.json"));
+//Deleting the note
+app.delete("/api/notes/:id", function(req,res) {
+    try{
+        noteDump = fs.readFileSync("./Develop/db/db.json", "utf8");
+        noteDump = JSON.parse(noteDump);
+        noteDump = noteDump.filter(function(note){
+            return note.id !=req.params.id
+        });
+
+        noteDump = JSON.stringify(noteDump);
+        fs.writeFile("./Develop/db/db.json", noteDump, "utf8", function(err){
+            if (err) throw err;
+        });
+
+        res.send(JSON.parse(noteDump));
+    } catch (err){
+        throw err;
+    }    
 });
 
 app.get("/notes", function(req, res) {
-    res.sendFile(path.join(__dirname, "./develop/public/notes.html"));
+    res.sendFile(path.join(__dirname, "./Develop/public/notes.html"));
 });
 
 app.get("/*", function(req, res) {
-    res.sendFile(path.join(__dirname, "./develop/public/index.html"));
+    res.sendFile(path.join(__dirname, "./Develop/public/index.html"));
 });
 
 
