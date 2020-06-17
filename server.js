@@ -15,6 +15,7 @@ app.use(express.static(path.join(__dirname, "Develop/public")));
 // Initialize HTML
 
 let noteDump =[];
+let counterID = 0;
 
 //Add Code Here
 app.get("/api/notes", function(req, res) {
@@ -41,7 +42,8 @@ app.post("/api/notes", function(req, res) {
 
         //parse the new note created into the json file
         noteDump =JSON.parse(noteDump);
-        req.body.id = noteDump.length;
+        req.body.id = counterID;
+        counterID++;
 
         noteDump.push(req.body);
         noteDump = JSON.stringify(noteDump);
@@ -85,8 +87,6 @@ app.get("/notes", function(req, res) {
 app.get("/*", function(req, res) {
     res.sendFile(path.join(__dirname, "./Develop/public/index.html"));
 });
-
-
 
 
 // Starts the server to begin listening
